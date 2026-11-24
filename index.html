@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="description" content="Math Runner: The Lost Temple — game petualangan 3D untuk belajar FPB dan KPK kelas IV SD, lengkap dengan Teacher Dashboard.">
+<meta name="theme-color" content="#123b2c">
+<title>Math Runner: The Lost Temple</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Cpath d=%22M50 4l40 20v30c0 22-18 36-40 42C28 90 10 76 10 54V24z%22 fill=%22%23f2b632%22/%3E%3Ctext x=%2250%22 y=%2266%22 text-anchor=%22middle%22 font-size=%2244%22 font-weight=%22900%22 fill=%22%23123b2c%22%3EM%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <div id="game-root" aria-hidden="true"></div>
+  <noscript><p class="noscript">Aktifkan JavaScript untuk memainkan Math Runner.</p></noscript>
+  <div id="boot" class="boot"><div class="boot-logo">MATH RUNNER</div><div class="boot-bar"><span></span></div><p id="boot-msg">Menyiapkan kuil…</p></div>
+
+  <div id="ui">
+    <!-- ================= MENU UTAMA ================= -->
+    <section id="scr-menu" class="screen menu hidden" aria-label="Menu utama">
+      <div class="menu-wrap">
+        <header class="logo" aria-label="Math Runner: The Lost Temple">
+          <div class="logo-top">MATH</div>
+          <div class="logo-main">RUNNER</div>
+          <div class="logo-ribbon"><span>THE LOST TEMPLE</span></div>
+          <p class="logo-sub">Petualangan 3D FPB &amp; KPK • Kelas IV SD</p>
+        </header>
+
+        <form id="start-form" class="stone-card start-card" autocomplete="off" novalidate>
+          <h2 class="card-title">Siap menjelajah?</h2>
+          <label class="field">
+            <span>Nama panggilan atau kode siswa</span>
+            <input id="in-name" type="text" maxlength="40" placeholder="contoh: Raka atau S-07" required>
+            <small>Cukup nama panggilan/kode. Jangan tulis alamat, nomor HP, atau email.</small>
+          </label>
+          <div class="field-row">
+            <label class="field">
+              <span>Kelas</span>
+              <select id="in-class"></select>
+            </label>
+            <label class="field hidden" id="other-class-wrap">
+              <span>Tulis kelas</span>
+              <input id="in-class-other" type="text" maxlength="20" placeholder="mis. IV F">
+            </label>
+          </div>
+          <fieldset class="field level-pick">
+            <legend>Mulai dari</legend>
+            <div class="level-grid" id="level-grid"></div>
+          </fieldset>
+          <p class="form-error" id="form-error" role="alert"></p>
+          <button type="submit" class="btn btn-play" id="btn-play">PLAY</button>
+        </form>
+
+        <nav class="menu-nav" aria-label="Menu lain">
+          <button class="btn btn-stone" data-go="howto">HOW TO PLAY</button>
+          <button class="btn btn-stone" data-go="learn">LEARNING ZONE</button>
+          <button class="btn btn-stone" data-go="teacher">TEACHER DASHBOARD</button>
+        </nav>
+
+        <footer class="menu-foot">
+          <label class="mini">Grafis
+            <select id="sel-quality">
+              <option value="auto">Otomatis</option><option value="high">Tinggi</option><option value="medium">Sedang</option><option value="low">Rendah (HP lama)</option>
+            </select>
+          </label>
+          <button class="mini-btn" id="btn-sound-menu" type="button">Suara: ON</button>
+          <a class="mini-btn hidden" id="open-tab" href="./" target="_blank" rel="noopener">Buka di tab baru</a>
+          <span class="mini note">Data tersimpan hanya di browser &amp; perangkat ini.</span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ================= HOW TO PLAY ================= -->
+    <section id="scr-howto" class="screen panel-screen hidden" aria-label="Cara bermain">
+      <div class="sheet">
+        <div class="sheet-head"><h2>Cara Bermain</h2><button class="btn-x" data-go="menu" aria-label="Kembali">✕</button></div>
+        <div class="howto-grid">
+          <div class="howto-card">
+            <h3>Kontrol di laptop</h3>
+            <ul class="keys">
+              <li><kbd>←</kbd> pindah ke kiri</li>
+              <li><kbd>→</kbd> pindah ke kanan</li>
+              <li><kbd>↑</kbd> / <kbd>Spasi</kbd> melompat</li>
+              <li><kbd>↓</kbd> meluncur (sliding)</li>
+              <li><kbd>P</kbd> jeda</li>
+              <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> pilih jawaban A/B/C</li>
+            </ul>
+          </div>
+          <div class="howto-card">
+            <h3>Kontrol di HP/tablet</h3>
+            <ul class="keys">
+              <li><b>Geser kiri/kanan</b> pindah jalur</li>
+              <li><b>Geser ke atas</b> melompat</li>
+              <li><b>Geser ke bawah</b> meluncur</li>
+              <li>Atau pakai <b>tombol panah</b> di layar</li>
+              <li>Ketuk tombol jawaban A/B/C</li>
+            </ul>
+          </div>
+          <div class="howto-card wide">
+            <h3>Gerbang Soal</h3>
+            <p>Di setiap level ada <b>5 gerbang ajaib</b>. Saat gerbang muncul, soal FPB atau KPK tampil di atas layar dan larimu melambat. Pindahlah ke <b>jalur gerbang yang berisi jawaban benar</b> (A kiri, B tengah, C kanan) atau ketuk tombol jawabannya. Jika kamu belum memilih, kamu akan berhenti di depan gerbang sampai memilih.</p>
+            <ul class="rules">
+              <li><b>Benar:</b> +100 poin dan gerbang terbuka.</li>
+              <li><b>Salah:</b> permainan tidak berakhir. Kamu melihat penjelasan, lalu lanjut berlari.</li>
+              <li><b>Rintangan:</b> lompati kayu/jebakan, meluncur di bawah dahan/balok, hindari batu. Kamu punya 3 nyawa.</li>
+              <li><b>Checkpoint:</b> jika nyawa habis, kamu bisa lanjut dari gerbang terakhir. Jawabanmu tetap tersimpan.</li>
+              <li><b>Koin:</b> +5 poin per koin. Selesaikan level untuk bonus +250.</li>
+            </ul>
+          </div>
+          <div class="howto-card wide">
+            <h3>Lencana Petualang</h3>
+            <div class="badge-list" id="howto-badges"></div>
+          </div>
+        </div>
+        <div class="sheet-foot"><button class="btn btn-play small" data-go="menu">Mengerti!</button></div>
+      </div>
+    </section>
+
+    <!-- ================= LEARNING ZONE ================= -->
+    <section id="scr-learn" class="screen panel-screen hidden" aria-label="Learning Zone">
+      <div class="sheet learn-sheet" id="learn-root"></div>
+    </section>
+
+    <!-- ================= HUD ================= -->
+    <div id="hud" class="hidden">
+      <div class="hud-left">
+        <div class="hud-level" id="hud-level">LEVEL 1</div>
+        <div class="hud-mission" id="hud-mission">Misi: FPB – The Factor Gate</div>
+        <div class="hud-progress" id="hud-progress" aria-label="Progres gerbang"></div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-stat"><span class="lbl">Skor</span><b id="hud-score">0</b></div>
+        <div class="hud-stat coin"><span class="lbl">Koin</span><b id="hud-coins">0</b></div>
+        <div class="hud-stat ok"><span class="lbl">Benar</span><b id="hud-correct">0</b></div>
+        <div class="hud-hearts" id="hud-hearts" aria-label="Nyawa"></div>
+        <button class="hud-btn" id="btn-sound" aria-label="Suara">♪</button>
+        <button class="hud-btn" id="btn-pause" aria-label="Jeda">❚❚</button>
+      </div>
+    </div>
+
+    <div id="qpanel" class="hidden" role="region" aria-live="polite" aria-label="Soal">
+      <div class="q-meta"><span class="chip" id="q-topic">FPB</span><span class="chip soft" id="q-diff">Mudah</span><span class="q-count" id="q-count">Gerbang 1/5</span></div>
+      <p class="q-text" id="q-text"></p>
+      <div class="q-options" id="q-options"></div>
+      <p class="q-hint" id="q-hint">Pindah ke jalur gerbang yang benar, atau ketuk jawabanmu.</p>
+    </div>
+
+    <div id="vcontrols" class="hidden" aria-hidden="true">
+      <button data-act="left" aria-label="Kiri">◀</button>
+      <div class="vc-mid"><button data-act="jump" aria-label="Lompat">▲</button><button data-act="slide" aria-label="Meluncur">▼</button></div>
+      <button data-act="right" aria-label="Kanan">▶</button>
+    </div>
+
+    <div id="banner" class="banner hidden"><div class="banner-sub" id="banner-sub"></div><div class="banner-main" id="banner-main"></div><div class="banner-env" id="banner-env"></div></div>
+    <div id="toasts" aria-live="polite"></div>
+
+    <!-- ================= OVERLAYS ================= -->
+    <section id="ov-pause" class="overlay hidden" aria-label="Jeda">
+      <div class="stone-card ov-card">
+        <h2>Istirahat sejenak</h2>
+        <p>Tekan <kbd>P</kbd> atau tombol di bawah untuk melanjutkan.</p>
+        <div class="ov-actions">
+          <button class="btn btn-play small" id="btn-resume">Lanjut</button>
+          <button class="btn btn-stone small" id="btn-learn-pause">Learning Zone</button>
+          <button class="btn btn-stone small" id="btn-quit">Akhiri &amp; Lihat Hasil</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="ov-feedback" class="overlay hidden" aria-label="Pembahasan">
+      <div class="stone-card ov-card fb-card">
+        <h2 class="fb-title">Belum tepat, tetap semangat!</h2>
+        <div class="fb-answers">
+          <div class="fb-box bad"><span>Jawabanmu</span><b id="fb-yours"></b></div>
+          <div class="fb-box good"><span>Jawaban benar</span><b id="fb-right"></b></div>
+        </div>
+        <p class="fb-tag" id="fb-tag"></p>
+        <div class="fb-explain"><h3>Penjelasan</h3><p id="fb-explain"></p></div>
+        <div class="ov-actions"><button class="btn btn-play small" id="btn-fb-continue">Lanjut berlari</button></div>
+      </div>
+    </section>
+
+    <section id="ov-down" class="overlay hidden" aria-label="Energi habis">
+      <div class="stone-card ov-card">
+        <h2>Ups, energimu habis!</h2>
+        <p id="down-msg">Tenang, kemajuanmu aman di checkpoint.</p>
+        <div class="ov-actions">
+          <button class="btn btn-play small" id="btn-checkpoint">Lanjut dari Checkpoint</button>
+          <button class="btn btn-stone small" id="btn-down-quit">Akhiri &amp; Lihat Hasil</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="ov-level" class="overlay hidden" aria-label="Level selesai">
+      <div class="stone-card ov-card level-card">
+        <div class="relic" id="lv-relic"></div>
+        <h2 id="lv-title">LEVEL 1 SELESAI!</h2>
+        <p class="lv-reward" id="lv-reward"></p>
+        <div class="lv-stats" id="lv-stats"></div>
+        <div class="badge-list compact" id="lv-badges"></div>
+        <div class="ov-actions">
+          <button class="btn btn-play small" id="btn-next-level">Lanjut ke Level 2</button>
+          <button class="btn btn-stone small" id="btn-level-finish">Selesai &amp; Lihat Hasil</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= HASIL ================= -->
+    <section id="scr-results" class="screen panel-screen hidden" aria-label="Hasil permainan">
+      <div class="sheet results-sheet">
+        <div class="res-head">
+          <div>
+            <p class="res-kicker" id="res-who"></p>
+            <h2 id="res-title">Petualangan Selesai!</h2>
+          </div>
+          <div class="res-score"><span>Total skor</span><b id="res-score">0</b></div>
+        </div>
+        <p class="res-motivation" id="res-motivation"></p>
+        <div class="res-grid" id="res-grid"></div>
+        <div class="res-levels" id="res-levels"></div>
+        <h3 class="res-sub">Lencana</h3>
+        <div class="badge-list" id="res-badges"></div>
+        <p class="res-note" id="res-note"></p>
+        <div class="ov-actions">
+          <button class="btn btn-play small" id="btn-again">Main Lagi</button>
+          <button class="btn btn-stone small" id="btn-save">Simpan Hasil</button>
+          <button class="btn btn-stone small" id="btn-res-learn">Learning Zone</button>
+          <button class="btn btn-stone small" data-go="menu">Menu Utama</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ================= TEACHER DASHBOARD ================= -->
+  <section id="teacher" class="teacher hidden" aria-label="Teacher Dashboard"></section>
+
+  <!-- Dialog umum (pengganti alert/confirm) -->
+  <div id="dialog" class="dialog hidden" role="dialog" aria-modal="true">
+    <div class="dialog-card">
+      <h3 id="dlg-title"></h3>
+      <div id="dlg-body"></div>
+      <div class="dialog-actions" id="dlg-actions"></div>
+    </div>
+  </div>
+</div>
+
+<script src="lib/three.min.js"></script>
+<script src="lib/chart.umd.min.js"></script>
+<script src="config.js"></script>
+<script src="questions.js"></script>
+<script src="storage.js"></script>
+<script src="audio.js"></script>
+<script src="game.js"></script>
+<script src="learning.js"></script>
+<script src="dashboard.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
